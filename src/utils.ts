@@ -8,19 +8,16 @@ import type { Preferences, UploadResponse } from "./types";
  * @param preferences The user preferences
  * @returns True if preferences are valid, false otherwise
  */
-export async function validatePreferences(
-	preferences: Preferences,
-): Promise<boolean> {
-	if (!preferences.apiKey || !preferences.uploadUrl) {
-		await showToast({
-			style: Toast.Style.Failure,
-			title: "Missing configuration",
-			message:
-				"Please set your API key and Chibisafe URL in the extension preferences",
-		});
-		return false;
-	}
-	return true;
+export async function validatePreferences(preferences: Preferences): Promise<boolean> {
+  if (!preferences.apiKey || !preferences.uploadUrl) {
+    await showToast({
+      style: Toast.Style.Failure,
+      title: "Missing configuration",
+      message: "Please set your API key and Chibisafe URL in the extension preferences",
+    });
+    return false;
+  }
+  return true;
 }
 
 /**
@@ -29,26 +26,26 @@ export async function validatePreferences(
  * @returns True if file exists, false otherwise
  */
 export async function validateFile(filePath: string): Promise<boolean> {
-	if (!existsSync(filePath)) {
-		await showToast({
-			style: Toast.Style.Failure,
-			title: "File not found",
-			message: `The file ${filePath} does not exist`,
-		});
-		return false;
-	}
-	return true;
+  if (!existsSync(filePath)) {
+    await showToast({
+      style: Toast.Style.Failure,
+      title: "File not found",
+      message: `The file ${filePath} does not exist`,
+    });
+    return false;
+  }
+  return true;
 }
 
 /**
  * Shows a toast indicating that no file is selected
  */
 export async function showNoFileSelectedToast(): Promise<void> {
-	await showToast({
-		style: Toast.Style.Failure,
-		title: "No file selected",
-		message: "Please select a file in Finder",
-	});
+  await showToast({
+    style: Toast.Style.Failure,
+    title: "No file selected",
+    message: "Please select a file in Finder",
+  });
 }
 
 /**
@@ -57,11 +54,11 @@ export async function showNoFileSelectedToast(): Promise<void> {
  * @returns The toast instance
  */
 export async function showUploadingToast(filePath: string): Promise<Toast> {
-	return await showToast({
-		style: Toast.Style.Animated,
-		title: "Uploading file",
-		message: basename(filePath),
-	});
+  return await showToast({
+    style: Toast.Style.Animated,
+    title: "Uploading file",
+    message: basename(filePath),
+  });
 }
 
 /**
@@ -70,43 +67,38 @@ export async function showUploadingToast(filePath: string): Promise<Toast> {
  * @param preferences User preferences containing API key and upload URL
  * @returns The upload response
  */
-export async function uploadFile(
-	filePath: string,
-	preferences: Preferences,
-): Promise<UploadResponse> {
-	// Import these modules dynamically to avoid TypeScript errors
-	const { FormData } = await import("formdata-node");
-	const { fileFromPath } = await import("formdata-node/file-from-path");
-	const fetch = (await import("node-fetch")).default;
+export async function uploadFile(filePath: string, preferences: Preferences): Promise<UploadResponse> {
+  // Import these modules dynamically to avoid TypeScript errors
+  const { FormData } = await import("formdata-node");
+  const { fileFromPath } = await import("formdata-node/file-from-path");
+  const fetch = (await import("node-fetch")).default;
 
-	// Create form data
-	const formData = new FormData();
-	const file = await fileFromPath(filePath);
-	formData.append("file", file);
+  // Create form data
+  const formData = new FormData();
+  const file = await fileFromPath(filePath);
+  formData.append("file", file);
 
-	// Upload file
-	const response = await fetch(preferences.uploadUrl, {
-		method: "POST",
-		headers: {
-			"x-api-key": preferences.apiKey,
-		},
-		// @ts-expect-error - FormData type mismatch between formdata-node and node-fetch
-		body: formData,
-	});
+  // Upload file
+  const response = await fetch(preferences.uploadUrl, {
+    method: "POST",
+    headers: {
+      "x-api-key": preferences.apiKey,
+    },
+    // @ts-expect-error - FormData type mismatch between formdata-node and node-fetch
+    body: formData,
+  });
 
-	if (!response.ok) {
-		throw new Error(
-			`Upload failed with status ${response.status}: ${await response.text()}`,
-		);
-	}
+  if (!response.ok) {
+    throw new Error(`Upload failed with status ${response.status}: ${await response.text()}`);
+  }
 
-	const result = (await response.json()) as UploadResponse;
+  const result = (await response.json()) as UploadResponse;
 
-	if (!result.url) {
-		throw new Error("Upload succeeded but no URL was returned");
-	}
+  if (!result.url) {
+    throw new Error("Upload succeeded but no URL was returned");
+  }
 
-	return result;
+  return result;
 }
 
 /**
@@ -114,20 +106,17 @@ export async function uploadFile(
  * @param url The URL to copy to clipboard
  * @param toast The toast to update
  */
-export async function handleSuccessfulUpload(
-	url: string,
-	toast: Toast,
-): Promise<void> {
-	// Copy URL to clipboard
-	await Clipboard.copy(url);
+export async function handleSuccessfulUpload(url: string, toast: Toast): Promise<void> {
+  // Copy URL to clipboard
+  await Clipboard.copy(url);
 
-	// Show success toast
-	toast.style = Toast.Style.Success;
-	toast.title = "Upload successful";
-	toast.message = "URL copied to clipboard";
+  // Show success toast
+  toast.style = Toast.Style.Success;
+  toast.title = "Upload successful";
+  toast.message = "URL copied to clipboard";
 
-	// Also show HUD for confirmation
-	await showHUD("File uploaded ✓ URL copied to clipboard");
+  // Also show HUD for confirmation
+  await showHUD("File uploaded ✓ URL copied to clipboard");
 }
 
 /**
@@ -135,14 +124,12 @@ export async function handleSuccessfulUpload(
  * @param error The error that occurred
  */
 export async function handleError(error: unknown): Promise<void> {
-	// Using console.error for logging
-	console.error(
-		`Error: ${error instanceof Error ? error.message : String(error)}`,
-	);
+  // Using console.error for logging
+  console.error(`Error: ${error instanceof Error ? error.message : String(error)}`);
 
-	await showToast({
-		style: Toast.Style.Failure,
-		title: "Upload failed",
-		message: error instanceof Error ? error.message : String(error),
-	});
+  await showToast({
+    style: Toast.Style.Failure,
+    title: "Upload failed",
+    message: error instanceof Error ? error.message : String(error),
+  });
 }
