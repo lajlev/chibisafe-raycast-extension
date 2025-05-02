@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync } from "node:fs";
 import { basename } from "node:path";
 import { showToast, Toast, Clipboard, showHUD } from "@raycast/api";
 import type { Preferences, UploadResponse } from "./types";
