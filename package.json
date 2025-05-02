@@ -1,8 +1,8 @@
 {
   "$schema": "https://www.raycast.com/schemas/extension.json",
-  "name": "chibisafe-uploader",
-  "title": "Chibisafe Uploader",
-  "description": "Upload file",
+  "name": "chibisafe",
+  "title": "Chibisafe",
+  "description": "Chibisafe extension for Uploading Files, Creating Snippets and Short Links",
   "icon": "extension-icon.png",
   "author": "lajlev",
   "categories": [
@@ -14,7 +14,7 @@
       "name": "upload-file",
       "title": "Upload File",
       "subtitle": "Upload Selected File in Finder",
-      "description": "",
+      "description": "Upload Selected File in Finder and Upload it to your Chibisafe instance",
       "mode": "no-view"
     }
   ],
