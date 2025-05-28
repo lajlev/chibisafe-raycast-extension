@@ -32,7 +32,7 @@ To install this extension locally:
 
 4. Link the extension to Raycast:
    ```
-   npm run build
+   npm run dev
    ```
 
 5. The extension should now be available in your Raycast application.
